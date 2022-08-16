@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="jspsych/dist/jspsych.js"></script>
+    <script src="jspsych/dist/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/dist/plugin-instructions.js"></script>
+    <link href="jspsych/dist/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+  <script>
+
+    /* initialize jsPsych */
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+
+    /* create timeline */
+    var timeline = [];
+
+    /* define welcome message trial */
+    var welcome = {
+      type: jsPsychInstructions,
+      pages: [
+        '<p>You will now be undergoing a language task where you have to decide whether the string of letters is an English word (e.g. HOUSE) or not (e.g. HESOU). In each trial, you will see a fixation cross being flashed on the screen for 500 milliseconds, then you will be shown a letter string. You will have to decide whether the string of letters form a word or not. </p>',
+        '<p>Use the L-key to indicate that the letter string forms a word and use the A-key to indicate that the letter string does not form a word.</p><p>We begin with a round of test-run before the actual task. </p>'
+      ],
+      show_clickable_nav: true
+    };
+    timeline.push(welcome);
+
+    /* define instructions trial */
+    var instructions = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <p>When you are ready, please position the first finger of 
+        your left hand over the "A" key and the first finger of your 
+        right hand over the "L" key. </p>
+        
+        <p>Hit the space-bar to begin the test-run.</p>
+        
+      `,
+      post_trial_gap: 2000
+    };
+    timeline.push(instructions);
+
+    var feedback = {
+      type:jsPsychHtmlKeyboardResponse,
+      stimulus: function(){
+        var feedback_text = "Incorrect";
+        var last_trial_accuracy = jsPsych.data.getLastTrialData().values()[0].accuracy;
+        if(last_trial_accuracy = true){
+          feedback_text = "Correct!"
+        }
+        return feedback_text
+      },
+      choices:"NO_KEYS",
+      trial_duration: 3000,
+    }
+
+    /* define trial stimuli array for timeline variables */
+    var test_stimuli = [
+      { stimulus: '<span style="font-size:60px;">decryption</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">occurrence</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">understudy</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">undisputed</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">reflection</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">havebioral</span>',  correct_response: 'A'},
+      { stimulus: '<span style="font-size:60px;">anituleten</span>',  correct_response: 'A'},
+      { stimulus: '<span style="font-size:60px;">pentinture</span>',  correct_response: 'A'},
+      { stimulus: '<span style="font-size:60px;">deedwilest</span>',  correct_response: 'A'}
+    ];
+
+    /* define fixation and test trials */
+    var fixation = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: '<div style="font-size:60px;">+</div>',
+      choices: "NO_KEYS",
+      trial_duration: 5000,
+      data: {
+        task: 'fixation'
+      }
+    };
+
+    var test = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      choices: ['A', 'L'],
+      data: {
+        task: 'response',
+        correct_response: jsPsych.timelineVariable('correct_response')
+      },
+      on_finish: function(data){
+        data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+      }
+    };
+
+    /* define test procedure */
+    var test_procedure = {
+      timeline: [fixation, test, feedback],
+      timeline_variables: test_stimuli,
+      randomize_order: true
+    };
+    timeline.push(test_procedure);
+
+  var setone = {
+      type: jsPsychInstructions,
+      pages: [
+        '<p>We will now be proceeding with the actual language task. You have to decide whether the string of letters is an English word (e.g. HOUSE) or not (e.g. HESOU). In each trial, you will see a fixation cross being flashed on the screen for 500 milliseconds, then you will be shown a letter string. You will have to decide whether the string of letters form a word or not. Use the L-key to indicate that the letter string forms a word and use the A-key to indicate that the letter string does not form a word.</p>',
+        '<p>There are a total of 200 trials in this task. You are required to obtain a <strong>minimum of 120</strong> correct <strong>and</strong> fast (below 550 milliseconds) responses out of the 200 trials.</p>',
+        '<p>The task will be split up into 2 sets of 100 trials. At the end of the first set, you will be receiving feedback on your performance for the task.</p><p>To stay on track with the goal, you are required to achieve <strong>at least 60</strong> correct and fast responses for the first set.</p>'
+      ],
+      show_clickable_nav: true
+    };
+    timeline.push(setone);
+
+    var setone = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <p>When you are ready, please position the first finger of 
+        your left hand over the "A" key and the first finger of your 
+        right hand over the "L" key. </p>
+        
+        <p>Hit the space-bar to begin the test-run.</p>
+        
+      `,
+      post_trial_gap: 2000
+    };
+    timeline.push(setone);
+
+    /* define trial stimuli array for timeline variables */
+    var setone_test_stimuli = [
+      { stimulus: '<span style="font-size:60px;">decryption</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">occurrence</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">understudy</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">undisputed</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">reflection</span>',  correct_response: 'L'},
+      { stimulus: '<span style="font-size:60px;">havebioral</span>',  correct_response: 'A'},
+      { stimulus: '<span style="font-size:60px;">anituleten</span>',  correct_response: 'A'},
+      { stimulus: '<span style="font-size:60px;">pentinture</span>',  correct_response: 'A'},
+      { stimulus: '<span style="font-size:60px;">deedwilest</span>',  correct_response: 'A'}
+    ];
+
+    /* define fixation and test trials */
+    var fixation = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: '<div style="font-size:60px;">+</div>',
+      choices: "NO_KEYS",
+      trial_duration: 5000,
+      data: {
+        task: 'fixation'
+      }
+    };
+
+    var setone_test = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      choices: ['A', 'L'],
+      data: {
+        task: 'response',
+        correct_response: jsPsych.timelineVariable('correct_response')
+      },
+      on_finish: function(data){
+        data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+      }
+    };
+
+    /* define test procedure */
+    var setone_test_procedure = {
+      timeline: [fixation, setone_test],
+      timeline_variables: setone_test_stimuli,
+      randomize_order: true
+    };
+    timeline.push(setone_test_procedure);
+
+    /* start the experiment */
+    jsPsych.run(timeline);
+
+  </script>
+</html>
